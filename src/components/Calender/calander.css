@@ -1,0 +1,14 @@
+@import url("https://cdn.syncfusion.com/ej2/material.css");
+
+.calander{
+    padding: 10%;
+    align-items: center;
+    justify-content: center;
+    width: 500px;
+    height: 500px;
+    /* background-color: blueviolet; */
+    margin-left: 300px;
+}
+.c{
+    margin-left:"800px"
+}

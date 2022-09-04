@@ -1,0 +1,125 @@
+.main-div{
+    /* margin-left: 15% ; */
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    height: 90px;
+    padding: 10px;
+box-shadow: -1px 10px 5px 0px rgba(196,190,196,0.59);
+position:fixed;
+z-index:100;
+background-color: #006266;
+width: 100%;
+}
+.topbarLeft {
+    flex: 3;
+    display: flex;
+    justify-content: space-around;
+    gap: 5%;
+    font-size: 20px;
+
+  }
+.topbarImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  .topbarCenter {
+    flex: 4;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2px;
+
+  }
+  select {
+   border-radius: 5px;
+   border-color: cornflowerblue;
+   font-weight: lighter;
+   padding: 5px;
+   }
+
+  .searchbar {
+    width: 60%;
+    height: 30px;
+    background-color: lightgray;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .searchIcon {
+    font-size: 20px !important;
+    margin-left: 10px;
+  }
+  
+  .searchInput {
+    border: none;
+    background-color: lightgray;
+    width: 75%;
+  }
+  
+  .searchInput:focus {
+    outline: none;
+  }
+.bar-icon{
+    font-size: x-large;
+}
+.logos {
+  margin-left: 2px;
+  font-size: x-large;
+  color: orange;
+}
+.topbarRight {
+    flex: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+  }
+.topbarIcons {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px
+  }
+  .topbarIconItem {
+    margin-right: 15px;
+    cursor: pointer;
+    position: relative;
+    font-size: x-large;
+  }
+  #nav-dropdown{
+    color: white; 
+}
+
+  @media only screen and (max-width: 425px){
+      
+    .searchbar {
+
+        display: none;
+      }
+    .theme{
+        display: none
+    }
+    .bar-icon{
+      font-size: medium;
+  }
+  .logo {
+    margin-left: 2px;
+    font-size: medium;
+    color: orange;
+  }
+  .topbarIcons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 2px
+  }
+  .topbarIconItem {
+    margin-right: 5px;
+    cursor: pointer;
+    position: relative;
+    font-size: large;
+  }
+}
