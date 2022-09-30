@@ -96,7 +96,7 @@ const Faq = () => {
   }, []);
   useEffect(() => {
     const result = countries.filter((country) => {
-      return country.name.toLowerCase().match(search.toLowerCase());
+      return country.name.toLowerCase().match(search.toLowerCase())||country.createdAt.toLowerCase().match(search.toLowerCase());
     });
     setFiltercountries(result);
   }, [search]);
@@ -109,7 +109,7 @@ const Faq = () => {
         data={filtercountries}
         pagination
         fixedHeader
-        fixedHeaderScrollHeight="500px"
+        // fixedHeaderScrollHeight="500px"
         selectableRowsHighlight
         highlightOnHover
         subHeader

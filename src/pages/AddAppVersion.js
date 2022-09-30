@@ -40,12 +40,19 @@ function AddAppVersion() {
       }
     );
     result = await result.json();
-     toast.success("App version Add successfull",{position: toast.POSITION.TOP_CENTER});
+    if(result.data.status===200){
+      toast.success("App version Add successfull",{position: toast.POSITION.TOP_CENTER});
       setTimeout(() => {
                   navigate("/systemConfig/appversion");
                 }, 1000);
+    }else if(result.statusCode===401){
+      toast.error(result.message)
+    }else if(result.data.status===201){
+      toast.warning(result.data.message)
+    }
+    
     console.log(result);
-  }
+  } 
   return (
     <>
       <SideBar />

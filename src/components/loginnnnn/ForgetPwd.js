@@ -27,10 +27,10 @@ function ForgetPwd() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email) {
-      console.log("Please Fill out all the Fields");
-      return toast.error("Please Fill out all the Fields");
-    }
+    // if (!email) {
+    //   console.log("Please Fill out all the Fields");
+    //   return toast.error("Please Fill out all the Fields");
+    // }
   };
 
   async function setPwd() {
@@ -44,13 +44,24 @@ function ForgetPwd() {
       },
     }).then((result) => {
       result.json().then((resq) => {
-        toast.success("Link send on Email successfully for foget the password", {
-          position: toast.POSITION.TOP_CENTER,
-        });
+        console.log("LINK SEND",resq)
+        if(resq.statusCode===400){
+          toast.error(resq.message)
+        }else if(resq.data.status==="failed"){
+          toast.error(resq.data.message)
+        }
+        else if(resq.data.status===401){
+          toast.error(resq.data.message)
+        }
+        else if(resq.data.status==="Success"){
+          toast.success(resq.data.message, {
+            position: toast.POSITION.TOP_CENTER,
+          });
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        }
       });
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
     });
   }
 

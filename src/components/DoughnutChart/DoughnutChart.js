@@ -3,10 +3,11 @@ import axios from "axios";
 import { Typography, Divider } from "antd";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import {useNavigate} from "react-router-dom";
 ChartJS.register(ArcElement, Tooltip, Legend);
    
 function DoughnutChart() { 
-
+const navigate=useNavigate()
    const [adminData, setAdminData] = useState([]);
   const getData = async () => {
     try {
@@ -34,11 +35,12 @@ function DoughnutChart() {
     },
   ],  
 }
-return (
+return (  
   <>
     <Doughnut
       data={Donutdata}
       style={{ height: "250px !important", width: "250px !important" }}
+      onClick={()=>navigate(`/admin`)}
     />
     <br />
     <span style={{ marginLeft: "3rem" }}> Blocked {adminData.Block} </span>
@@ -47,6 +49,6 @@ return (
     <span style={{ marginLeft: "6rem" }}>Total User {adminData.count} </span>
   </>
 );
-}
+}    
 
 export default DoughnutChart;

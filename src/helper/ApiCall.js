@@ -1,3 +1,4 @@
+
 export const authenticate = (data, next) => {
   // This Function store the JWT token(auth token) of the user in the localStorage
   if (typeof window !== "undefined") {
@@ -21,7 +22,8 @@ export const isAuthenticated = () => {
 
 export const signout = () => {
   if (typeof window !== "undefined") {
-    localStorage.removeItem("jwt");
+    localStorage.removeItem("jwt");   
+    
     // next();
 
     // return fetch(`${API}/signout1`, {

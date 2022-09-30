@@ -13,32 +13,62 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Search from "@material-ui/icons/Search";
 import { VscMail } from "react-icons/vsc";
-import { BsBell } from "react-icons/bs";
+
 import { AnimatePresence, motion } from "framer-motion";
 import "./Navbar.css";
 import SidebarMenu from "./SidebarMenu";
 import applify from "./Applify.jpeg"
+ 
+
+let user = JSON.parse(localStorage.getItem("jwt"));
+// let permisionDashboard=user.data.userdetails.dashBoardPermission
+// console.log("permisionDashboard",permisionDashboard)  
+// let permissionUserManagement=user.data.userdatails.userManagementPermission;
+// let permissionAdmin=user.data.userdetails.adminPermission;
+// let permissionNotification=user.data.userdetails.NotificationPermission;
+// let permissionSytemConfig=user.data.userdetails.systemConfigPermission;
+// let permissionReport=user.data.userdetails.reportPermission
+
+  
+// console.log("This is sidebar ciikiiikk i",usersss)
 const routes = [
+      
+  // permisionDashboard  ?
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: <FaHome />,
-  },
+  }
+  // : {    
+  //   path: "/welcome"
+  // }
+  , 
+  // permissionUserManagement ?
   {
     path: "/usersManagement",
     name: "User Management",
     icon: <FaUser />,
-  },
+  }
+  // :
+  // {}
+  ,
+  // permissionAdmin?
   {
     path: "/admin",
     name: "Admin",
     icon: <FaUserGraduate />,
-  },
+  }
+  // :{}
+  ,
+  // permissionNotification ?
   {
     path: "/notification",
     name: "Notification",
     icon: <MdNotifications/>,
-  },
+  }
+  // :{}
+  ,
+  // permissionSytemConfig ?
   {
     path: "/systemConfig",
     name: "System Configuration",
@@ -69,7 +99,10 @@ const routes = [
         name: "Comment",
       },
     ],
-  },
+  }
+  // :{}
+  ,
+  // permissionReport ?
   {
     path: "/reports",
     name: "Report",
@@ -85,7 +118,9 @@ const routes = [
         name: "Report Bugs",
       },
     ],
-  },
+  }
+  // :{}
+  ,
 ];
 
 const SideBar = ({ children }) => {
@@ -124,12 +159,17 @@ const SideBar = ({ children }) => {
       },
     },
   };
+  
   const navigate = useNavigate(); 
   let user=JSON.parse(localStorage.getItem("jwt"))
   console.log("User details",user)
     const userimage = user.data.userdetails.image;
+
+ 
 function LogOut(){
   localStorage.clear();
+  // cookies.remove();
+  // removeCookie("user");
   toast.success("LogOut Succesfully",{position: toast.POSITION.TOP_CENTER});
   navigate("/")
 }
@@ -137,7 +177,9 @@ function gotoProfile() {
     navigate("/profile");
   }
   
-
+  // const [cookies, setCookie] = useCookies(["user"]);
+  //  usersss=cookies.email;
+  // console.log("This is sidebar ciikiiikk i",usersss)
   return (
     <>  
       <nav className="main-div navbar-static-top">
@@ -185,7 +227,7 @@ function gotoProfile() {
               </NavDropdown>
             </Nav>
           </div>
-        </div>
+        </div> 
       </nav>
 
       <div className="main-container">
@@ -213,7 +255,7 @@ function gotoProfile() {
                     isOpen={isOpen}
                   />
                 );
-              }
+              } 
 
               return (
                 <NavLink
@@ -249,3 +291,4 @@ function gotoProfile() {
 };
 
 export default SideBar;
+ 

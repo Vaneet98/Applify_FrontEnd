@@ -22,7 +22,7 @@ const AppVersionEdit = (props) => {
     e.preventDefault();
     console.log("data", latestVersion);
   }
- 
+  
   const getCountries = async () => {
     try {
       const response = await axios.get(
@@ -34,6 +34,25 @@ const AppVersionEdit = (props) => {
       console.log(error);
     }
   };
+
+
+  const [admin, setAdmin] = useState([]);
+  const getAdmin = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4001/app/list/" + params.id
+      );
+      console.log("Admiiinview",response)
+      setAdmin(response.data.data.user);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
+  useEffect(() => { 
+    getAdmin();
+  }, []);
+
 
    async function save(){
     const id=props.id
@@ -48,15 +67,20 @@ const AppVersionEdit = (props) => {
   }).then((result)=>{
     result.json().then((resq)=>{
       console.log("This is resq ",resq);
-      toast.success("Admin Edit successfull",{position: toast.POSITION.TOP_CENTER});
-      getCountries();
-        setTimeout(() => {
-                    navigate("/systemConfig/appversion");
-                  }, 1000);
+      if(resq.data.status===200){
+        toast.success("Admin Edit successfull",{position: toast.POSITION.TOP_CENTER});
+        getCountries();
+          setTimeout(() => {
+                      navigate("/systemConfig/appversion");
+                    }, 1000);
+      }else{
+        toast.error(resq.data.message)
+      }
+   
     })
   }) 
  }
-
+ 
 useEffect(() => {
  
   getCountries();
@@ -87,7 +111,7 @@ useEffect(() => {
                   onChange={(e) => setLatestVersion(e.target.value)}
                   name="latestVersion"
                   type="text"
-                  placeholder="Enter Title"
+                  placeholder={admin.latestVersion} 
                 />
                 <p style={{ color: "red", fontWeight: "bold" }}>
                   {formErrors.latestVersion}

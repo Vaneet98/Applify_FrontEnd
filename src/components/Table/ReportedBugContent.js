@@ -2,14 +2,16 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import SideBar from "../Sidebar/SideBar"
+import {useNavigate } from "react-router-dom";
 const ReportBugContent = () => {
   const [search, setSearch] = useState("");
   const [countries, setCountries] = useState([]);
   const [filtercountries, setFiltercountries] = useState([]);
+  const navigate=useNavigate()
   const getCountries = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4001/RepotedBug/list?limit=100&skip=0"
+        "http://localhost:4001/RepotedBug/list?limit=10000&skip=0"
       );
       console.log(response);
       setCountries(response.data.data.rows);
@@ -65,16 +67,41 @@ const ReportBugContent = () => {
       selector: (row) => row.ReportedItem,
       sortable: true,
     },
+    {
+      name: (
+        <h6>
+          <b>Action</b>
+        </h6> 
+      ),
+      cell: (row) => (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "110px", 
+          }}
+        >
+          <button onClick={()=>navigate(`/editReportBug/${row.Id} `)}  style={{ border: "none" }}>
+            {" "}
+            <i className="fa-solid fa-pen fa-lg" style={{color:"blue"}}></i>
+          </button>
+        </div>
+      ), 
+     
+    },
   ];
   useEffect(() => {
     getCountries();
   }, []);
   useEffect(() => {
     const result = countries.filter((country) => {
-      return country.name.toLowerCase().match(search.toLowerCase());
+      return country.ReportedBy.toLowerCase().match(search.toLowerCase())||country.Status.toLowerCase().match(search.toLowerCase())||country.ReportedItem.toLowerCase().match(search.toLowerCase());
     });
     setFiltercountries(result);
   }, [search]);
+  const handleRowClicked = (row) => {
+    navigate(`/reportbugdetails/${row.Id}`);
+  }
   return (
     <><SideBar/>
         <div style={{marginLeft:"235px",width:"1000px"}}>
@@ -84,10 +111,11 @@ const ReportBugContent = () => {
         data={filtercountries}
         pagination
         fixedHeader
-        fixedHeaderScrollHeight="500px"
+        // fixedHeaderScrollHeight="500px"
         selectableRowsHighlight
         highlightOnHover
         subHeader
+        onRowClicked={handleRowClicked}
         subHeaderComponent={
           <input
             type="text"

@@ -15,8 +15,14 @@ const Dashboard = () => {
   const [name, setName] = useState("");
 
   const [email, setEmail] = useState("");
-  const [checkbox, setCheckbox] = useState(false);
-
+  // const [checkbox, setCheckbox] = useState(false);
+  const [dashBoardPermission, setDashBoardPermission] = useState(false);
+  const [userManagementPermission, setUserManagementPermission] =
+    useState(false);
+  const [NotificationPermission, setNotificationPermission] = useState(false);
+  const [reportPermission, setReportPermission] = useState(false);
+  const [adminPermission, setAdminPermission] = useState(false);
+  const [systemConfigPermission, setSystemConfigPermission] = useState(false);
   const [selects, setSelects] = useState("");
   const navigate=useNavigate()
   const title=selects;
@@ -26,11 +32,11 @@ const Dashboard = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log("data", checkbox, selects);
+    console.log("data", selects);
   }
   async function signup() {
-    console.log(name, email,title);
-    let item = { name, email ,title}; 
+    console.log(name, email,title,dashBoardPermission,userManagementPermission,NotificationPermission,reportPermission,adminPermission,systemConfigPermission);
+    let item = { name, email ,title,dashBoardPermission,userManagementPermission,NotificationPermission,reportPermission,adminPermission,systemConfigPermission}; 
     console.log(item);
     let result = await fetch(
       "http://localhost:4001/admin/RegistrationAdmin",
@@ -44,10 +50,17 @@ const Dashboard = () => {
       }
     );
     result = await result.json();
+    if(result.data.status=== "success"){
      toast.success("Admin Register successfull.Please check the mail for set the password",{position: toast.POSITION.TOP_CENTER});
       setTimeout(() => {
                   navigate("/admin");
-                }, 2000);
+                }, 1000);
+                }else if(result.statusCode===400){
+                  toast.error(result.message)
+                }else{
+                  toast.error(result.message)
+                }
+                
     console.log(result);
   }
 
@@ -102,45 +115,45 @@ const Dashboard = () => {
             <Form.Group>
               <Form.Check
                 inline
-                label="Dashboard"
-                name="dash"
-                value="dash"
-                onChange={(e) => setCheckbox(e.target.checked)}
+                label="dashBoardPermission"
+                name="dashBoardPermission"
+                value={dashBoardPermission}
+                onChange={(e) => setDashBoardPermission(e.target.checked)}
               />
               <Form.Check
                 inline
-                label="UserManagement"
-                name="user"
-                value="user"
-                onChange={(e) => setCheckbox(e.target.checked)}
+                label="userManagementPermission"
+                name="userManagementPermission"
+                value={userManagementPermission}
+                onChange={(e) => setUserManagementPermission(e.target.checked)}
               />
               <Form.Check
                 inline
-                label="Notification"
-                name="notification"
-                value="noti"
-                onChange={(e) => setCheckbox(e.target.checked)}
+                label="NotificationPermission"
+                name="NotificationPermission"
+                value={NotificationPermission}
+                onChange={(e) => setNotificationPermission(e.target.checked)}
               />
               <Form.Check
                 inline
-                label="Report"
-                name="report"
-                value="report"
-                onChange={(e) => setCheckbox(e.target.checked)}
+                label="reportPermission"
+                name="reportPermission"
+                value={reportPermission}
+                onChange={(e) => setReportPermission(e.target.checked)}
               />
               <Form.Check
                 inline
-                label="Admin"
-                name="admin"
-                value="admin"
-                onChange={(e) => setCheckbox(e.target.checked)}
+                label="adminPermission"
+                name="adminPermission"
+                value={adminPermission}
+                onChange={(e) => setAdminPermission(e.target.checked)}
               />
               <Form.Check
                 inline
-                label="System Configuration"
-                name="systemconfig"
-                value="system"
-                onChange={(e) => setCheckbox(e.target.checked)}
+                label="systemConfigPermission"
+                name="systemConfigPermission"
+                value={systemConfigPermission}
+                onChange={(e) => setSystemConfigPermission(e.target.checked)}
               />
             </Form.Group>
             <Button

@@ -52,10 +52,18 @@ const AddNotification = (props) => {
       "http://localhost:4001/notification/sendNotification",
       data
     );
-    toast.success("Notification added successfully");
-    setTimeout(() => {
-      navigate("/notification");
-    }, 1000);
+    result = await result.json();
+    if(result.data.status===200){ 
+      toast.success("Notification added successfully");
+      setTimeout(() => {
+        navigate("/notification");
+      }, 1000);
+    }else if(result.statusCode===400){
+      toast.error(result.message)
+    }else if(result.data.status===201){
+      toast.warning(result.data.message)
+    }
+    
   }
 //    async function save(){ 
 
@@ -82,7 +90,7 @@ const AddNotification = (props) => {
 useEffect(() => {
  
   getCountries();
-}, []);
+}, []); 
   return (
     <>
     <SideBar />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { Container } from "react-bootstrap";
 import { AiOutlineLeft } from "react-icons/ai";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import Validate from "../components/Validate";
 import useForm from "../components/useForm";
 import SideBar from "../components/Sidebar/SideBar";
-
+import axios from "axios"
 function AchivementEdit() {
   const navigate = useNavigate();
   const params = useParams();
@@ -28,18 +28,46 @@ function AchivementEdit() {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-      },
+      }, 
     }).then((result) => {
       result.json().then((resq) => {
-        toast.success("Admin Achievement Edit successfully", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-        setTimeout(() => {
-          navigate("/systemConfig/adminachievement");
-        }, 1000);
-      });
+        console.log("Reusltsssss",resq)
+        if(resq.statusCode===400){
+          toast.error(resq.meassage)
+        }else if(resq.data.status===200){
+          toast.success("Admin Achievement Edit successfully", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+          setTimeout(() => {
+            navigate("/systemConfig/adminachievement");
+          }, 1000);
+        }else if(resq.data.status===401){
+          toast.warning(resq.data.meassage)
+        }
+        else{
+          toast.warning(resq.meassage)  
+        }
+      }); 
     });
   }
+
+  // const [admin, setAdmin] = useState([]);
+  // const getAdmin = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:4001/Achivement/list/" + params.Id
+  //     );
+  //     console.log("Admiiinview",response)
+  //     setAdmin(response.data.data.user);
+
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }; 
+  // useEffect(() => { 
+  //   getAdmin();
+  // }, []);
+
   return (
     <>
       <SideBar />
@@ -64,7 +92,7 @@ function AchivementEdit() {
                   onChange={handleChange}
                   name="name"
                   type="text"
-                  placeholder="name"
+                  // placeholder={admin.name}
                 />
                 <p style={{ color: "red", fontWeight: "bold" }}>
                   {formErrors.name}

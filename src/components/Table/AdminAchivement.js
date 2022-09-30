@@ -6,11 +6,23 @@ import { Tooltip, Fab } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { Link,useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 const AdminAchivement = () => {
   const [search, setSearch] = useState("");
   const [countries, setCountries] = useState([]);
   const [filtercountries, setFiltercountries] = useState([]);
   const navigate=useNavigate();
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => {
+    setShow(false);
+    localStorage.removeItem("adminId");
+  };
+  const handleShow = (adminId) => {
+    setShow(true);
+    localStorage.setItem("adminId", adminId);
+  };
   const getCountries = async () => {
     try {
       const response = await axios.get(
@@ -23,7 +35,8 @@ const AdminAchivement = () => {
       console.log(error);
     }
   };
-  async function deleteAdminAchivement(adminId){
+  async function deleteAdminAchivement(){
+    let adminId= localStorage.getItem("adminId");
   await fetch(`http://localhost:4001/Achivement/delete/${adminId}`,{
     method:"DELETE"
   }).then((result)=>{
@@ -31,6 +44,7 @@ const AdminAchivement = () => {
       console.log("This is resq ",resq);
       toast.success("Admin Achivement delete successfull",{position: toast.POSITION.TOP_CENTER});
       getCountries();
+      handleClose();
     })
   })
  }
@@ -90,7 +104,7 @@ const AdminAchivement = () => {
             {" "}
             <i className="fa-solid fa-pen fa-lg"style={{color:"blue"}}></i>
           </button>
-          <button onClick={()=>deleteAdminAchivement(row.Id)} style={{ border: "none" }}>
+          <button onClick={() => handleShow(row.Id)}  style={{ border: "none" }}>
             {" "}
             <i className="fa-regular fa-trash-can fa-lg" style={{color:"red"}}></i>
           </button>
@@ -103,10 +117,13 @@ const AdminAchivement = () => {
   }, []);
   useEffect(() => {
     const result = countries.filter((country) => {
-      return country.name.toLowerCase().match(search.toLowerCase());
+      return country.name.toLowerCase().match(search.toLowerCase())||country.Type.toLowerCase().match(search.toLowerCase())||country.createdAt.toLowerCase().match(search.toLowerCase());
     });
     setFiltercountries(result);
   }, [search]);
+   const handleRowClicked = (row) => {
+    navigate(`/adminachivementdetails/${row.Id}`);
+  }
   return (
     <> 
     <SideBar/> 
@@ -117,10 +134,11 @@ const AdminAchivement = () => {
         data={filtercountries}
         pagination
         fixedHeader
-        fixedHeaderScrollHeight="500px"
+        // fixedHeaderScrollHeight="500px"
         selectableRowsHighlight
         highlightOnHover
         subHeader
+         onRowClicked={handleRowClicked}
         subHeaderComponent={
           <input
             type="text"
@@ -138,6 +156,20 @@ const AdminAchivement = () => {
           </Link>
         </Fab>
       </Tooltip>
+      <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Important message</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure, you want to delete this record?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              No
+            </Button>
+            <Button variant="primary" onClick={deleteAdminAchivement}>
+              Yes
+            </Button>
+          </Modal.Footer>
+      </Modal>
     </div>
     </>
   );

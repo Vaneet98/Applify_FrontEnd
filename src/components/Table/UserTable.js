@@ -6,11 +6,23 @@ import { Add } from "@mui/icons-material";
 import DataTable from "react-data-table-component";
 import SideBar from "../Sidebar/SideBar";
 import { toast } from "react-toastify";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 const  UserTable = () => {
   const [search, setSearch] = useState("");
   const [countries, setCountries] = useState([]);
   const [filtercountries, setFiltercountries] = useState([]);
   const navigate = useNavigate(); 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => {
+    setShow(false);
+    localStorage.removeItem("id");
+  };
+  const handleShow = (id) => {
+    setShow(true);
+    localStorage.setItem("id", id);
+  };
   const getCountries = async () => {
     try {
       const response = await axios.get(
@@ -23,7 +35,8 @@ const  UserTable = () => {
       console.log(error);
     }
   };
-  async function deleteUser(id){
+  async function deleteUser(){
+    let id = localStorage.getItem("id");
     await fetch(`http://localhost:4001/api/delete/${id}`,{
       method:"DELETE"
     }).then((result)=>{
@@ -31,6 +44,7 @@ const  UserTable = () => {
         console.log("This is user request ",resq);
         toast.success("User delete successfull",{position: toast.POSITION.TOP_CENTER});
         getCountries(); 
+        handleClose();
       })
     }) 
    }
@@ -70,6 +84,7 @@ const  UserTable = () => {
       ),
       selector: (row) => row.name,
       sortable: true,
+        grow: 0.7
     },
     {
       name: (
@@ -79,6 +94,7 @@ const  UserTable = () => {
       ),
       selector: (row) => row.phoneNumber,
       sortable: true,
+      grow: 0.7
     },     
     {
       name: (
@@ -134,27 +150,36 @@ const  UserTable = () => {
             {" "}
             <i className="fa-solid fa-pen fa-lg"style={{color:"blue"}}></i>
           </button>
-          <button onClick={()=>deleteUser(row.id)} style={{ border: "none" }}>
+          <button onClick={() => handleShow(row.id)} style={{ border: "none" }}>
           {" "}
             <i  className="fa-regular fa-trash-can fa-lg" style={{color:"red"}}></i>
           </button>
           <button onClick={ ()=>block(row.id)} style={{ border: "none" }}>
             {" "}
-            <i class="fa-sharp fa-solid fa-lock-open"></i>
+            <i className="fa-sharp fa-solid fa-lock-open"style={{color:"green"}}></i>
           </button>
         </div>
       ),
     },
   ];
+  const paginationComponentOptions = {
+    // rowsPerPageText: 'Filas por página',
+    rangeSeparatorText: 'Total',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'Todos',
+};
   useEffect(() => {
     getCountries();
   }, []);
   useEffect(() => {
     const result = countries.filter((country) => {
-      return country.name.toLowerCase().match(search.toLowerCase());
+      return country.name.toLowerCase().match(search.toLowerCase())||country.email.toLowerCase().match(search.toLowerCase())||country.phoneNumber.toLowerCase().match(search.toLowerCase());
     });
     setFiltercountries(result);
   }, [search]);
+    const handleRowClicked = (row) => {
+    navigate(`/userdetails/${row.id}`);
+  };
   return (
     <><SideBar/>
     <div style={{marginLeft:"235px",width:"1000px"}}>
@@ -163,11 +188,14 @@ const  UserTable = () => {
         columns={colunms}
         data={filtercountries}
         pagination
+        paginationComponentOptions={paginationComponentOptions}
         fixedHeader
-        fixedHeaderScrollHeight="500px"
+        // fixedHeaderScrollHeight="500px"
         selectableRowsHighlight
         highlightOnHover
+        striped
         subHeader
+        onRowClicked={handleRowClicked}
         subHeaderComponent={
           <input
             type="text"
@@ -185,6 +213,20 @@ const  UserTable = () => {
           </Link>
         </Fab>
       </Tooltip>
+      <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Important message</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure, you want to delete this record?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              No
+            </Button>
+            <Button variant="primary" onClick={deleteUser}>
+              Yes
+            </Button>
+          </Modal.Footer>
+</Modal>
     </div>
     </>
   );

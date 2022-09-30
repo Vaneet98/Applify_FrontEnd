@@ -30,13 +30,20 @@ function AddAchivement() {
       },
     }).then((result) => {
       result.json().then((resq) => {
-        toast.success("App Version added successfully", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-        setTimeout(() => {
-          navigate("/systemConfig/adminachievement");
-        }, 1000);
-      });
+        if(resq.statusCode===400){
+          toast.error(resq.message)
+        }else if(resq.data.status===200){
+          toast.success("App Version added successfully", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+          setTimeout(() => {
+            navigate("/systemConfig/adminachievement");
+          }, 1000);
+        }
+       else {
+        toast.warning(resq.message)
+       }
+      }); 
     });
   }
   return (

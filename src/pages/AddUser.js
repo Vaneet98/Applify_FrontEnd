@@ -39,10 +39,18 @@ const AddUser = () => {
       }
     );
     result = await result.json();
-     toast.success("User Register successfull",{position: toast.POSITION.TOP_CENTER});
+    if(result.statusCode===400){
+      toast.error(result.message)
+    }
+    else if(result.data.stauts===200){
+      toast.success("User Register successfull",{position: toast.POSITION.TOP_CENTER});
       setTimeout(() => {
                   navigate("/usersManagement");
                 }, 2000);
+    }else{
+      toast.error(result.message)
+    }
+     
     console.log(result);
   }
 

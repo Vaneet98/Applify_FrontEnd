@@ -12,40 +12,56 @@ import UserTable from "./components/Table/UserTable";
 import ReportContent from "./components/Table/ReportContent";
 import ReportedBugContent from "./components/Table/ReportedBugContent";
 import AdminAchivement from "./components/Table/AdminAchivement";
-import Calender from "./components/Calender/Calender";
+import Calender from "./components/Calender/Calender1";
 import Formlogin from "./components/loginnnnn/Login";
 import ForgetPwd from "./components/loginnnnn/ForgetPwd";
 import AdminEdit from "./pages/AdminEdit";
 import UserEdit from "./pages/UserEdit";
 import Protected from "./components/Protected/Protected";
 import Registration from "./components/loginnnnn/Registration";
-import AddUser from "./pages/AddUser";
+import AddUser from "./pages/AddUser";      
 import SideBar from "./components/Sidebar/SideBar"
 import ProfilePwd from "./components/Proffile/ProfilePwd";
 import AddAppVersion from "./pages/AddAppVersion";
 import AppVersionEdit from "./pages/AppVersionEdit";
 import SetPassword from "./pages/SetPassword";
 import NotificationEdit from "./pages/NotificationEdit";
+import EditReportContent from "./pages/EditReportContent";
 import AddNotification from "./pages/AddNotification";
 import AddAchivement from "./pages/AddAchivement";
 import AchivementEdit from "./pages/AchivementEdit";
 import AddCategory from "./pages/AddCatagory";
 import Chat from "./components/Chat/Chat.js"
+import Adminview from "./components/ViewTableDetail/Adminview"
+import Userview from "./components/ViewTableDetail/Userview";
+import Notificationview from "./components/ViewTableDetail/Notificationview";
+import Categoryview from "./components/ViewTableDetail/Categoryview";
+import Appview from "./components/ViewTableDetail/Appview";
+import AdminAchivementview from "./components/ViewTableDetail/AdminAchivementview";
+import ReportContentview from "./components/ViewTableDetail/ReportContentview";
+import ReportBugview from "./components/ViewTableDetail/ReportedBugview";
+import Welcome from "./components/assests/Welcome";
+ import { useCookies } from "react-cookie";
+import EditReportBug from "./pages/EditReportBug";
 function App() {
+  // const [cookies, setCookie] = useCookies(["user"]);
+  // var usersss=cookies.email;
+  // console.log("This is sidebar cookies check on app.js file",usersss)
   return (
     <Router>
         <Routes>
           <Route path="/" element={<Formlogin/>}/>
           <Route path="/forgetPwd" element={<ForgetPwd/>}/>
           <Route path="/registration" element={<Registration/>}/>
-          <Route path="/reset/:token" element={<SetPassword/>}/>
+          <Route path="/welcome" element={<Welcome/>}/>
+          <Route path="/reset/:token/:id" element={<SetPassword/>}/>
           <Route path="/dashboard" element={<Protected Cmp={Mainchart}/>} />
           <Route path="/usersManagement" element={<Protected Cmp={UserTable}  />} />
           <Route path="/admin" element={<Protected Cmp= {AdminTable} />} />
           <Route path="/notification" element={<Protected Cmp= {Notification} />} />
           <Route path="/systemConfig/categories" element={<Protected Cmp= {Category} />} />
           <Route path="/systemConfig/appversion" element={<Protected Cmp= {AppVersion} />} />
-          <Route path="//systemConfig/chat" element={<Protected Cmp= {Chat} />} />
+          <Route path="/systemConfig/chat" element={<Protected Cmp= {Chat} />} />
           <Route path="/systemConfig/reportbug" element={<Protected Cmp= {AppVersion} />} />
           <Route path="/systemConfig/calander" element={<Protected Cmp= {Calender} />} />
           <Route
@@ -68,7 +84,16 @@ function App() {
           <Route path="/editUser/:id" element={<Protected Cmp= {UserEdit} />} />
           <Route path="/editAppVersion/:id" element={<Protected Cmp= {AppVersionEdit} />} />
           <Route path="/editNotification/:id" element={<Protected Cmp= {NotificationEdit} />} />
-
+          <Route path="/editReportContent/:Id" element={<Protected Cmp= {EditReportContent} />} />
+          <Route path="/editReportBug/:Id" element={<Protected Cmp= {EditReportBug} />} />
+        <Route path="/admindetails/:adminId" element={<Protected Cmp= {Adminview} />} />
+        <Route path="/userdetails/:id" element={<Protected Cmp= {Userview} />} />
+        <Route path="/notificationdetails/:notificationId" element={<Protected Cmp= {Notificationview} />} />
+        <Route path="/categorydetails/:cId" element={<Protected Cmp= {Categoryview} />} />
+        <Route path="/appdetails/:AppId" element={<Protected Cmp= {Appview} />} />
+        <Route path="/adminachivementdetails/:Id" element={<Protected Cmp= {AdminAchivementview} />} />
+        <Route path="/reportcontentdetails/:Id" element={<Protected Cmp= {ReportContentview} />} />
+        <Route path="/reportbugdetails/:Id" element={<Protected Cmp= {ReportBugview} />} />
         </Routes>
         <ToastContainer/>
     </Router>

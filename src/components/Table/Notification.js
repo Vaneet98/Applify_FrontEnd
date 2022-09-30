@@ -6,11 +6,24 @@ import { toast } from "react-toastify";
 import {Link, useNavigate  } from "react-router-dom";
 import { Tooltip, Fab } from "@mui/material";
 import { Add } from "@mui/icons-material";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import logo from "./Applify.jpeg";
 const Notification = () => {
   const navigate=useNavigate();
   const [search, setSearch] = useState("");
   const [countries, setCountries] = useState([]);
   const [filtercountries, setFiltercountries] = useState([]);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => {
+    setShow(false);
+    localStorage.removeItem("notificationId");
+  };
+  const handleShow = (notificationId) => {
+    setShow(true);
+    localStorage.setItem("notificationId", notificationId);
+  };
   const getCountries = async () => {
     try {
       const response = await axios.get(
@@ -23,7 +36,8 @@ const Notification = () => {
       console.log(error);
     }
   };
-  async function deleteNotification(notificationId){
+  async function deleteNotification(){
+    let notificationId = localStorage.getItem("notificationId");
     await fetch(`http://localhost:4001/notification/delete/${notificationId}`,{
       method:"DELETE"
     }).then((result)=>{
@@ -31,6 +45,7 @@ const Notification = () => {
         console.log("This is notifation request ",resq);
         toast.success("Notification delete successfull");
         getCountries();
+         handleClose();
       })
     })
    }
@@ -68,7 +83,7 @@ const Notification = () => {
           <b>Image</b>
         </h6>
       ),
-      selector: (row) => <img alt="" width={80} height={50} src={`http://localhost:4001/${row.image}`} />,
+      selector: (row) =>  row.image?<img alt="" width={80} height={70} src={`http://localhost:4001/${row.image}`} />:<img alt="" width={80} height={70} src={logo} />,
       sortable: true,
     },
     {
@@ -85,16 +100,17 @@ const Notification = () => {
             width: "110px",
           }}
         >
-          <button onClick={()=>deleteNotification(row.notificationId)} style={{ border: "none" }}>
-            {" "}
-            <i className="fa-regular fa-trash-can fa-lg" style={{color:"red"}}></i>
-          </button>
           <button onClick={()=>navigate(`/editNotification/${row.notificationId} `)} style={{ border: "none" }}>
             {" "}
             <i className="fa-solid fa-pen fa-lg"style={{color:"blue"}}></i>
           </button>
+          <button onClick={() => handleShow(row.notificationId)} style={{ border: "none" }}>
+            {" "}
+            <i className="fa-regular fa-trash-can fa-lg" style={{color:"red"}}></i>
+          </button>
+          
         </div>
-      ),
+      ),  
     },
   ];
   useEffect(() => {
@@ -102,10 +118,13 @@ const Notification = () => {
   }, []);
   useEffect(() => {
     const result = countries.filter((country) => {
-      return country.userType.toLowerCase().match(search.toLowerCase());
+      return country.userType.toLowerCase().match(search.toLowerCase())||country.notification.toLowerCase().match(search.toLowerCase());
     });
     setFiltercountries(result);
   }, [search]);
+    const handleRowClicked = (row) => {
+    navigate(`/notificationdetails/${row.notificationId}`);
+  };
   return (
     <><SideBar/>
     <div style={{marginLeft:"235px",width:"1000px"}}>
@@ -115,14 +134,15 @@ const Notification = () => {
         data={filtercountries}
         pagination
         fixedHeader
-        fixedHeaderScrollHeight="500px"
+        // fixedHeaderScrollHeight="500px"
         selectableRowsHighlight
         highlightOnHover
         subHeader
+        onRowClicked={handleRowClicked}
         subHeaderComponent={
           <input
             type="text"
-            placeholder="Search here"
+            placeholder="Search here" 
             className="  form-control"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -136,6 +156,20 @@ const Notification = () => {
           </Link>
         </Fab>
       </Tooltip>
+      <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Important message</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure, you want to delete this record?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              No
+            </Button>
+            <Button variant="primary" onClick={deleteNotification}>
+              Yes
+            </Button>
+          </Modal.Footer>
+      </Modal>
     </div>
     </>
   );

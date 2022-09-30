@@ -36,8 +36,27 @@ const params=useParams()
     }
   };
 
+
+  const [admin, setAdmin] = useState([]);
+  const getAdmin = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4001/api/list/" + params.id
+      );
+      console.log("Admiiinview",response)
+      setAdmin(response.data.data.user);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getAdmin();
+  }, []);
+
+
    async function save(){
-    const id=props.id
+    // const id=props.id
     let item={name,phoneNumber}
   await fetch("http://localhost:4001/api/edit/"+params.id,{
     method:"PUT",
@@ -49,12 +68,21 @@ const params=useParams()
   }).then((result)=>{
     result.json().then((resq)=>{
       console.log("This is resq ",resq);
-      toast.success("User Edit successfull",{position: toast.POSITION.TOP_CENTER});
+      if(resq.data.status===200){
+        toast.success("User Edit successfull",{position: toast.POSITION.TOP_CENTER});
+        getCountries();
         setTimeout(() => {
                     navigate("/usersManagement");
                   }, 1000);
+      }else  if(resq.statusCode===400){
+        toast.error(resq.message)
+      
+      }else if(resq.data.status===201){
+        toast.warning(resq.data.message)
+      } 
+        
     })
-  }) 
+  })  
  }
 
 useEffect(() => {
@@ -80,7 +108,7 @@ useEffect(() => {
                 onChange={(e) => setName(e.target.value)}
                 name="name"
                 type="text"
-                placeholder="Enter Name"
+                placeholder={admin.name}
               />
               <p style={{ color: "red", fontWeight: "bold" }}>
                 {formErrors.name}
@@ -93,7 +121,7 @@ useEffect(() => {
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 name="phoneNumber"
                 type="text"
-                placeholder="Enter your phone number"
+                placeholder={admin.phoneNumber}
               />
               <p style={{ color: "red", fontWeight: "bold" }}>
                 {formErrors.name}

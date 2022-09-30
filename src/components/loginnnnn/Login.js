@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,createContext } from "react";
 import "./login.css";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
-import logo from "./logo.png"
+import logo from "./logo.png";
 import { toast } from "react-toastify";
-import {authenticate} from "../../helper/ApiCall.js"
-function Login() {
+import { authenticate } from "../../helper/ApiCall.js";
+import { useCookies } from "react-cookie";
 
-  const navigate=useNavigate()
+function Login() {
+  const navigate = useNavigate();
   const [theme, setTheme] = useState("Light");
   const [colors, setColors] = useState({
     HeadingColor: "#000",
@@ -17,24 +18,28 @@ function Login() {
     button: "black",
     buttonTextColor: "white",
   });
-   const [values, setValues] = useState({
+  const [values, setValues] = useState({
     email: "",
     password: "",
-    error:"",
-    success:""
+    error: "",
+    success: "",
   });
 
-  useEffect(()=>{
-    if(localStorage.getItem("jwt")){
-      toast.warning("You are logged In",{position: toast.POSITION.TOP_CENTER});
-        navigate("/dashboard")
-    } 
-},[])
+  useEffect(() => {
+    if (localStorage.getItem("jwt")) {
+      toast.warning("You are logged In", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      navigate("/dashboard");
+    }
+  }, []);
   const [formErrors, setFormErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}-${value}`);
+    setCookie("email", email, { path: "/" });
+    setCookie("password", password, { path: "/" });
     setValues({
       ...values,
       [name]: value,
@@ -49,7 +54,7 @@ function Login() {
       return toast.error("Please Fill out all the Fields");
     }
   };
-  
+
   const { email, password } = values;
   async function signup() {
     console.log(password, email);
@@ -60,34 +65,39 @@ function Login() {
       body: JSON.stringify(item),
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json", 
+        Accept: "application/json",
       },
     });
     result = await result.json();
-    if(result){ 
-      console.log("Result",result.data.token)
-      console.log("Result1",result.data.status)
-      if (result.data.status === 'failed') {
-                toast.error("Email or password is not valid",{position: toast.POSITION.TOP_CENTER});
-                setValues({ ...values, error: result.data.message, success: false });
-              } else if (result.data.status === "Success") {
-                authenticate(result, () => {
-                  setValues({
-                    ...values,
-                    success: true,
-                    isMember: false,
-                  });
-                  console.log("THIS IS DATA", result);
-                  toast.success("logged In Successfully",{position: toast.POSITION.TOP_CENTER});
-                  
-      
-                  setTimeout(() => {
-                    navigate("/dashboard");
-                  }, 2000);
-                });
-              }
+    if (result) {
+      // console.log("Result",result.data.token)
+      // console.log("Result1",result.data.status)
+      if (result.data.status === "failed") {
+        toast.error("Email or password is not valid", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        setValues({ ...values, error: result.data.message, success: false });
+      } else if (result.data.status === "Success") {
+        authenticate(result, () => {
+          setValues({
+            ...values,
+            success: true,
+            isMember: false,
+          });
+          console.log("THIS IS DATA", result);
+          toast.success("logged In Successfully", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+
+          setTimeout(() => {
+            navigate("/welcome");
+          }, 2000);
+        });
+      } else if (result.data.status === 404) {
+        toast.error(result.data.message);
+      }
     }
-  
+
     console.log(result);
   }
 
@@ -169,6 +179,15 @@ function Login() {
     ChangeColor();
   }, [theme]);
 
+  const [cookies, setCookie] = useCookies(["user"]);
+
+  const handle = () => {
+    setCookie("email", email, { path: "/" });
+    setCookie("password", password, { path: "/" });
+  };
+
+  const emailed= cookies.email;
+  console.log("This is sidevbar cookies check on login page",emailed)
   return (
     <Container
       id="container"
@@ -193,7 +212,11 @@ function Login() {
             type="text"
             placeholder="Enter email"
             onChange={handleChange}
+            // onChange={handle}
             name="email"
+            // value={
+            //   cookies.email ? (values.email = cookies.email) : values.email
+            // }
             value={values.email}
           />
           <p style={{ color: "red", fontWeight: "bold" }}>{formErrors.email}</p>
@@ -203,9 +226,15 @@ function Login() {
           <Form.Label style={{ color: Styles.textColor }}>Password</Form.Label>
           <Form.Control
             onChange={handleChange}
+            // onChange={handle}
             type="password"
             placeholder="Password"
             name="password"
+            // value={
+            //   cookies.password
+            //     ? (values.password = cookies.password)
+            //     : values.password
+            // }
             value={values.password}
           />
           <p style={{ color: "red", fontWeight: "bold" }}>
@@ -218,9 +247,12 @@ function Login() {
           <div className="col">
             <input
               type="checkbox"
-              onChange={handleChange}
+              onChange={handleChange}  
               name="checkbox"
-              value={values.checkbox}
+              // checked={cookies.email?"true" : "false"}     
+             value={cookies.email?values.checked:values.checkbox}
+            // value={checkbox}
+              // onClick={handle}
             />
             <label htmlFor="" style={{ color: Styles.textColor }}>
               Remember Me
@@ -240,11 +272,14 @@ function Login() {
               </p>
             </Link>
           </div>
-          
         </div>
         {/* </Form.Group> */}
 
-        <button  id="btn" style={{ backgroundColor: Styles.button }}onClick={signup}>
+        <button
+          id="btn"
+          style={{ backgroundColor: Styles.button }}
+          onClick={signup}
+        >
           Login
         </button>
         <br />

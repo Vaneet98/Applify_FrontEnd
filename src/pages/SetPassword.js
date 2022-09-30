@@ -1,7 +1,7 @@
 import React, {  useState } from "react";
 import "../components/loginnnnn/login.css";
 import logo from "../components/loginnnnn/logo.png"
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
 import { toast } from "react-toastify";
@@ -13,7 +13,7 @@ function SetPassword() {
     password: "",
     confirmPassword: "",
   });
-
+  const params=useParams();
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}-${value}`);
@@ -22,18 +22,21 @@ function SetPassword() {
       [name]: value,
     });
   };
-  const { email, password, confirmPassword } = values;
+  const { password, confirmPassword } = values;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password || !confirmPassword) {
+    if ( !password || !confirmPassword) {
       console.log("Please Fill out all the Fields");
       return toast.error("Please Fill out all the Fields");
     }
   };
-
+console.log("THis is paramater id",params.id)
+const adminId=params.id
+const token=params.token
   async function setPwd() {
-    let item = { email, password, confirmPassword };
+    let item = { adminId,token, password, confirmPassword };
+    console.log("Item data",item)
     await fetch(`http://localhost:4001/admin/setpassword`, {
       method: "POST",
       body: JSON.stringify(item),
@@ -43,12 +46,23 @@ function SetPassword() {
       },
     }).then((result) => {
       result.json().then((resq) => {
-        toast.success("Password set  successfully", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
+        console.log("this is setpasswod",resq.statusCode)
+         if(resq.statusCode===400){
+          toast.error(resq.message)
+        }
+        else if(resq.data.status==="Success"){
+          toast.success("Password set  successfully", {
+            position: toast.POSITION.TOP_CENTER,
+          }); 
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        }
+        
+        else{
+          toast.error("Something is wrong")
+        }
+       
       });
     });
   }
@@ -62,7 +76,7 @@ function SetPassword() {
             We love creative Business Ideas
           </h5>
         </div>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
+        {/* <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
             type="email"
@@ -71,7 +85,7 @@ function SetPassword() {
             name="email"
             value={email}
           />
-        </Form.Group>
+        </Form.Group> */}
 
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>New Password</Form.Label>

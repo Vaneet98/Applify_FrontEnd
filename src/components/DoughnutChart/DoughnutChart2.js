@@ -3,10 +3,12 @@ import axios from "axios";
 import { Typography, Divider } from "antd";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import {useNavigate} from "react-router-dom";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function DoughnutChart2() { 
   const [adminData, setAdminData] = useState([]);
+  const navigate=useNavigate()
   const getData = async () => {
     try {
       const response = await axios.get(
@@ -35,7 +37,8 @@ function DoughnutChart2() {
 }
 return (  
   <>
-    <Doughnut data={Donutdata} />
+    <Doughnut data={Donutdata} 
+    onClick={()=>navigate(`/reports/reportContent`)}/>
 
     <br />
 

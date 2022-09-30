@@ -3,32 +3,35 @@ import Button from "react-bootstrap/Button";
 import { Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { toast } from "react-toastify";
-import { authenticate } from "../../helper/ApiCall.js";
+// import { authenticate } from "../../helper/ApiCall.js";
 import { useNavigate} from "react-router-dom";
 // import SideBar from "../Sidebar/SideBar";
 import "./ChangePwd.css";
 export default function ChangePassword() {
   let user = JSON.parse(localStorage.getItem("jwt"));
+  console.log("changePassword",user)
+  let email=user.data.userdetails.email
+  console.log("EEWmail",email)
   const navigate=useNavigate()
   const [values, setValues] = useState({
-    email: "",
+   
     old_password: "",
     new_password: "",
     confirmPassword: "",
   });
-
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}-${value}`);
     setValues({
-      ...values,
+      ...values, 
       [name]: value,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !old_password || !new_password || !confirmPassword) {
+    if ( !old_password || !new_password || !confirmPassword) {
       return toast.error("Please Fill out all the Fields");
     }
   };
@@ -46,19 +49,28 @@ export default function ChangePassword() {
       },
     });
     result = await result.json();
-    toast.success("Password Updation Successful.");
-
-   navigate("/profile")
+    console.log("changepasswaord resrult",result)
+    if(result.data.status===402){
+      toast.error(result.data.message)
+    }else if(result.data.status===403){
+      toast.error(result.data.message)
+    }else if(result.data.status===200){
+      toast.success("Password Updation Successful.");
+      navigate("/profile")
+    }else{
+      toast.error("Something is wrong")
+    }
+  
     console.log(result);
   }
 
-  const { email, old_password, new_password, confirmPassword } = values;
+  const { old_password, new_password, confirmPassword } = values;
   return (
     <div>
     <Container>
       <div className="admin-main">
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+          {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <Form.Label className="required-FIELD">Email</Form.Label>
             <Form.Control
               type="email"
@@ -67,7 +79,7 @@ export default function ChangePassword() {
               name="email"
               value={values.email}
             />
-          </Form.Group>
+          </Form.Group> */}
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <Form.Label className="required-FIELD">
               Enter Old Password

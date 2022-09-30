@@ -37,6 +37,24 @@ const NotificationEdit = (props) => {
     }
   };
 
+
+  const [admin, setAdmin] = useState([]);
+  const getAdmin = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4001/notification/list/" + params.id
+      );
+      console.log("Admiiinview",response)
+      setAdmin(response.data.data.user);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
+  useEffect(() => { 
+    getAdmin();
+  }, []);
+
    async function save(){ 
     const id=props.id
     let item={userType,notification}
@@ -50,15 +68,22 @@ const NotificationEdit = (props) => {
   }).then((result)=>{
     result.json().then((resq)=>{
       console.log("This is resq ",resq);
-      toast.success("Notification Edit successfull",{position: toast.POSITION.TOP_CENTER});
-      getCountries();
-        setTimeout(() => {
-                    navigate("/notification");
-                  }, 1000);
+      if(resq.data.status===200){
+        toast.success("Notification Edit successfull",{position: toast.POSITION.TOP_CENTER});
+        getCountries();
+          setTimeout(() => {
+                      navigate("/notification");
+                    }, 1000);
+      }else if(resq.statusCode===400){
+        toast.error(resq.message)
+      }
+    else if(resq.data.status===201){
+      toast.warning(resq.data.message)
+    }
     })
   }) 
  }
-
+ 
 useEffect(() => {
  
   getCountries();
@@ -76,25 +101,26 @@ useEffect(() => {
           <hr />
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label className="required-FIELD">Name</Form.Label>
+              <Form.Label className="required-FIELD">Message</Form.Label>
               <Form.Control
               alue={notification}
                 onChange={(e) => setNotification(e.target.value)}
                 name="name"
                 type="text"
-                placeholder="Enter message"
+                placeholder={admin.notification}
               />
               <p style={{ color: "red", fontWeight: "bold" }}>
                 {formErrors.name}
-              </p>
+              </p>  
             </Form.Group>
             <Form.Label>Title</Form.Label>
             <Form.Select
               id="select"
                 value={userType}
-              v
+            
               onChange={handleSelect}
             >
+              <option></option>
               <option>All</option>
               <option>Android</option>
               <option>IOS</option>
